@@ -1,0 +1,16 @@
+package com.scaler.ecommerce.Models;
+
+import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Entity
+public class Order extends BaseModel{
+    @ManyToMany
+    private List<Product> products;
+}
