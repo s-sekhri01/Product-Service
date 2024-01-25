@@ -1,12 +1,7 @@
 package com.scaler.ecommerce.Controllers;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.scaler.ecommerce.DTOs.GenericProductDTO;
+import com.scaler.ecommerce.DTOs.RequestProductDTO;
+import com.scaler.ecommerce.DTOs.ResponseProductDTO;
 import com.scaler.ecommerce.Exceptions.NotFoundException;
-import com.scaler.ecommerce.Models.Product;
 import com.scaler.ecommerce.Services.InbuiltProductService;
-import com.scaler.ecommerce.Services.OutSourceProductService;
 
 @RestController
 @RequestMapping("/products")
@@ -32,33 +26,29 @@ public class ProductController {
         this.inbuiltProductService = inbuiltProductService;
     }
 
+    @GetMapping
+    public List<ResponseProductDTO> getAllProducts() {
+        return inbuiltProductService.getAllProducts();
+    }
+
+    @GetMapping("{id}")
+    public ResponseProductDTO getProductById(@PathVariable("id") String id) throws NotFoundException {
+        return inbuiltProductService.getProductById(id);
+    }
+
     @PostMapping
-    public Product createProduct(@RequestBody Product product) {
+    public ResponseProductDTO createProduct(@RequestBody RequestProductDTO product) {
         return inbuiltProductService.createProduct(product);
     }
 
     @PutMapping
-    public Product updateProductById(@RequestBody Product product) {
+    public ResponseProductDTO updateProductById(@RequestBody RequestProductDTO product) {
         return inbuiltProductService.updateProduct(product);
     }
 
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return inbuiltProductService.getAllProducts();
-    }
-
-    @GetMapping("{uuid}")
-    public Product getProductById(@PathVariable("uuid") String uuid) throws NotFoundException {
-        Optional<Product> opt = inbuiltProductService.getProductById(UUID.fromString(uuid));
-        if (!opt.isPresent()) {
-            throw new NotFoundException("Product with ID : " + uuid.toString() + " not found.");
-        }
-        return opt.get();
-    }
-
-    @DeleteMapping("{uuid}")
-    public void deleteProduct(@PathVariable("uuid") String uuid) {
-        inbuiltProductService.deleteProduct(UUID.fromString(uuid));
+    @DeleteMapping("{id}")
+    public void deleteProduct(@PathVariable("id") String id) {
+        inbuiltProductService.deleteProduct(id);
     }
 
     // private OutSourceProductService productService;
