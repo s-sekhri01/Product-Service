@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import javax.swing.text.html.Option;
-
 import org.springframework.stereotype.Service;
 
 import com.scaler.ecommerce.DTOs.RequestProductDTO;
@@ -38,12 +36,13 @@ public class InbuiltProductService {
 
     public ResponseProductDTO getProductById(String id) throws NotFoundException {
         UUID uuid = UUID.fromString(id);
-        if(uuid == null) throw new NullPointerException();
+        if (uuid == null)
+            throw new NullPointerException();
         Optional<Product> product = productRepository.findById(uuid);
         ResponseProductDTO response = new ResponseProductDTO();
-        if(product.isPresent()){
+        if (product.isPresent()) {
             response = responseProductDTOMapper(product.get());
-        }else{
+        } else {
             throw new NotFoundException("Product with id : " + id + " is not found.");
         }
         return response;
@@ -51,21 +50,22 @@ public class InbuiltProductService {
 
     public ResponseProductDTO createProduct(RequestProductDTO requestProductDTO) {
         Product product = requestProductDTOMapper(requestProductDTO);
-        return responseProductDTOMapper(productRepository.save(product)); 
+        return responseProductDTOMapper(productRepository.save(product));
     }
 
     public void deleteProduct(String id) {
         UUID uuid = UUID.fromString(id);
-        if(uuid == null) throw new NullPointerException();
+        if (uuid == null)
+            throw new NullPointerException();
         productRepository.deleteById(uuid);
     }
 
     public ResponseProductDTO updateProduct(RequestProductDTO requestProductDTO) {
         Product product = requestProductDTOMapper(requestProductDTO);
-        return responseProductDTOMapper(productRepository.save(product)); 
+        return responseProductDTOMapper(productRepository.save(product));
     }
 
-    public Product requestProductDTOMapper(RequestProductDTO requestProductDTO) {
+    public static Product requestProductDTOMapper(RequestProductDTO requestProductDTO) {
         Product product = new Product();
         product.setTitle(requestProductDTO.getTitle());
         product.setDescription(requestProductDTO.getDescription());
@@ -81,7 +81,7 @@ public class InbuiltProductService {
         return product;
     }
 
-    public ResponseProductDTO responseProductDTOMapper(Product product) {
+    public static ResponseProductDTO responseProductDTOMapper(Product product) {
         ResponseProductDTO responseProductDTO = new ResponseProductDTO();
         responseProductDTO.setId(product.getUuid().toString());
         responseProductDTO.setTitle(product.getTitle());
