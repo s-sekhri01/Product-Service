@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.scaler.ecommerce.DTOs.RequestProductDTO;
@@ -17,8 +18,9 @@ import com.scaler.ecommerce.Models.Product;
 import com.scaler.ecommerce.Repositories.CategoryRepository;
 import com.scaler.ecommerce.Repositories.ProductRepository;
 
+// @Primary
 @Service
-public class InbuiltProductService {
+public class InbuiltProductService implements ProductService {
 
     private ProductRepository productRepository;
 
@@ -52,16 +54,22 @@ public class InbuiltProductService {
         return response;
     }
 
-    public ResponseProductDTO createOrUpdateProduct(RequestProductDTO requestProductDTO) {
+    public ResponseProductDTO createProduct(RequestProductDTO requestProductDTO) {
         Product product = requestProductDTOMapper(requestProductDTO);
         return responseProductDTOMapper(productRepository.save(product));
     }
 
-    public void deleteProduct(String id) {
+    public ResponseProductDTO updateProduct(String id, RequestProductDTO requestProductDTO) throws NotFoundException {
+        Product product = requestProductDTOMapper(requestProductDTO);
+        return responseProductDTOMapper(productRepository.save(product));
+    }
+
+    public ResponseProductDTO deleteProduct(String id) {
         UUID uuid = UUID.fromString(id);
         if (uuid == null)
             throw new NullPointerException();
-        productRepository.deleteById(uuid);
+        Product product = productRepository.deleteByUuid(uuid);
+        return responseProductDTOMapper(product);
     }
 
     public static Product requestProductDTOMapper(RequestProductDTO requestProductDTO) {

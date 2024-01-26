@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service;
 
 import com.scaler.ecommerce.Clients.FakeStoreProductClient;
 import com.scaler.ecommerce.Clients.DTOs.FakeStoreProductDTO;
-import com.scaler.ecommerce.DTOs.GenericProductDTO;
+import com.scaler.ecommerce.DTOs.RequestProductDTO;
+import com.scaler.ecommerce.DTOs.ResponseProductDTO;
 import com.scaler.ecommerce.Exceptions.NotFoundException;
 
 @Primary
-@Service("fakeStoreProductService")
-public class FakeStoreProductService implements OutSourceProductService {
+@Service()
+public class FakeStoreProductService implements ProductService {
 
     private FakeStoreProductClient fakeStoreProductClient;
 
@@ -23,49 +24,58 @@ public class FakeStoreProductService implements OutSourceProductService {
 
     // Map the response objec to our genericProduct DTO (usually done in Mapper
     // classes)
-    private GenericProductDTO productDTOmapper(FakeStoreProductDTO fakeStoreProductDTO) {
-        GenericProductDTO genericProductDTO = new GenericProductDTO();
-        genericProductDTO.setId(fakeStoreProductDTO.getId());
-        genericProductDTO.setTitle(fakeStoreProductDTO.getTitle());
-        genericProductDTO.setDescription(fakeStoreProductDTO.getDescription());
-        genericProductDTO.setImage(fakeStoreProductDTO.getImage());
-        genericProductDTO.setPrice(fakeStoreProductDTO.getPrice());
-        genericProductDTO.setCategory(fakeStoreProductDTO.getCategory());
 
-        return genericProductDTO;
+    public static FakeStoreProductDTO requestProductDTOMapper(RequestProductDTO requestProductDTO) {
+        FakeStoreProductDTO fakeStoreProductDTO = new FakeStoreProductDTO();
+        fakeStoreProductDTO.setTitle(requestProductDTO.getTitle());
+        fakeStoreProductDTO.setDescription(requestProductDTO.getDescription());
+        fakeStoreProductDTO.setImage(requestProductDTO.getImage());
+        fakeStoreProductDTO.setCategory(requestProductDTO.getCategory());
+        fakeStoreProductDTO.setPrice(requestProductDTO.getPrice());
+
+        return fakeStoreProductDTO;
     }
 
-    @Override
-    public GenericProductDTO getProductById(Long id) throws NotFoundException {
-        return productDTOmapper(fakeStoreProductClient.getProductById(id));
+    public static ResponseProductDTO responseProductDTOMapper(FakeStoreProductDTO fakeStoreProductDTO) {
+        ResponseProductDTO responseProductDTO = new ResponseProductDTO();
+        responseProductDTO.setId(String.valueOf(fakeStoreProductDTO.getId()));
+        responseProductDTO.setTitle(fakeStoreProductDTO.getTitle());
+        responseProductDTO.setDescription(fakeStoreProductDTO.getDescription());
+        responseProductDTO.setImage(fakeStoreProductDTO.getImage());
+        responseProductDTO.setCategory(fakeStoreProductDTO.getCategory());
+        responseProductDTO.setPrice(fakeStoreProductDTO.getPrice());
+
+        return responseProductDTO;
     }
 
-    // Create another mapper to convert genericProductDTO to FakeStoreProductDTO
-    @Override
-    public GenericProductDTO createProduct(GenericProductDTO genericProductDTO) {
-        return productDTOmapper(fakeStoreProductClient.createProduct(genericProductDTO));
+    public ResponseProductDTO getProductById(String id) throws NotFoundException {
+        Long longId = Long.parseLong(id);
+        return responseProductDTOMapper(fakeStoreProductClient.getProductById(longId));
     }
 
-    @Override
-    public List<GenericProductDTO> getAllProducts() {
+    public ResponseProductDTO createProduct(RequestProductDTO requestProductDTO) {
+        return responseProductDTOMapper(fakeStoreProductClient.createProduct(requestProductDTO));
+    }
+
+    public List<ResponseProductDTO> getAllProducts() {
         List<FakeStoreProductDTO> fakeStoreProductDTOList = fakeStoreProductClient.getAllProducts();
 
-        List<GenericProductDTO> genericProductDTOList = new ArrayList<>();
+        List<ResponseProductDTO> responseProductDTOList = new ArrayList<>();
+
         for (FakeStoreProductDTO fakeStoreProductDTO : fakeStoreProductDTOList) {
-            genericProductDTOList.add(productDTOmapper(fakeStoreProductDTO));
+            responseProductDTOList.add(responseProductDTOMapper(fakeStoreProductDTO));
         }
 
-        return genericProductDTOList;
+        return responseProductDTOList;
     }
 
-    @Override
-    public GenericProductDTO deleteProduct(Long id) {
-        return productDTOmapper(fakeStoreProductClient.deleteProduct(id));
+    public ResponseProductDTO deleteProduct(String id) {
+        Long longId = Long.parseLong(id);
+        return responseProductDTOMapper(fakeStoreProductClient.deleteProduct(longId));
     }
 
-    @Override
-    public GenericProductDTO updateProduct(Long id, GenericProductDTO genericProductDTO) throws NotFoundException {
-        // TODO Auto-generated method stub
-        return productDTOmapper(fakeStoreProductClient.updateProductById(id, genericProductDTO));
+    public ResponseProductDTO updateProduct(String id, RequestProductDTO requestProductDTO) throws NotFoundException {
+        return responseProductDTOMapper(
+                fakeStoreProductClient.updateProductById(Long.parseLong(id), requestProductDTO));
     }
 }

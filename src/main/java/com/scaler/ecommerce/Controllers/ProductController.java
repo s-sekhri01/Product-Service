@@ -2,6 +2,8 @@ package com.scaler.ecommerce.Controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,42 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.scaler.ecommerce.DTOs.RequestProductDTO;
 import com.scaler.ecommerce.DTOs.ResponseProductDTO;
 import com.scaler.ecommerce.Exceptions.NotFoundException;
-import com.scaler.ecommerce.Services.InbuiltProductService;
+import com.scaler.ecommerce.Services.ProductService;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
-    private InbuiltProductService inbuiltProductService;
-
-    public ProductController(InbuiltProductService inbuiltProductService) {
-        this.inbuiltProductService = inbuiltProductService;
-    }
-
-    @GetMapping
-    public List<ResponseProductDTO> getAllProducts() {
-        return inbuiltProductService.getAllProducts();
-    }
-
-    @GetMapping("{id}")
-    public ResponseProductDTO getProductById(@PathVariable("id") String id) throws NotFoundException {
-        return inbuiltProductService.getProductById(id);
-    }
-
-    @PostMapping
-    public ResponseProductDTO createProduct(@RequestBody RequestProductDTO product) {
-        return inbuiltProductService.createOrUpdateProduct(product);
-    }
-
-    @PutMapping
-    public ResponseProductDTO updateProductById(@RequestBody RequestProductDTO product) {
-        return inbuiltProductService.createOrUpdateProduct(product);
-    }
-
-    @DeleteMapping("{id}")
-    public void deleteProduct(@PathVariable("id") String id) {
-        inbuiltProductService.deleteProduct(id);
-    }
+    private ProductService productService;
 
     // private OutSourceProductService productService;
 
@@ -58,34 +31,35 @@ public class ProductController {
     // this.productService = productService;
     // }
 
-    // @PostMapping
-    // public GenericProductDTO createProduct(@RequestBody GenericProductDTO
-    // genericProductDTO) {
-    // return productService.createProduct(genericProductDTO);
-    // }
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
-    // @PutMapping("/{id}")
-    // public GenericProductDTO updateProductById(@PathVariable("id") Long id,
-    // @RequestBody GenericProductDTO genericProductDTO) throws NotFoundException {
-    // return productService.updateProduct(id, genericProductDTO);
-    // }
+    @GetMapping
+    public List<ResponseProductDTO> getAllProducts() {
+        return productService.getAllProducts();
+    }
 
-    // @GetMapping
-    // public List<GenericProductDTO> getAllProducts() {
-    // return productService.getAllProducts();
-    // }
+    @GetMapping("{id}")
+    public ResponseProductDTO getProductById(@PathVariable("id") String id) throws NotFoundException {
+        return productService.getProductById(id);
+    }
 
-    // @GetMapping("{id}")
-    // public GenericProductDTO getProductById(@PathVariable("id") Long id) throws
-    // NotFoundException {
-    // return productService.getProductById(id);
-    // }
+    @PostMapping
+    public ResponseProductDTO createProduct(@RequestBody RequestProductDTO product) {
+        return productService.createProduct(product);
+    }
 
-    // @DeleteMapping("{id}")
-    // public ResponseEntity<GenericProductDTO> deleteProduct(@PathVariable("id")
-    // Long id) {
-    // return new ResponseEntity<>(productService.deleteProduct(id), HttpStatus.OK);
-    // }
+    @PutMapping
+    public ResponseProductDTO updateProductById(@RequestBody RequestProductDTO requestProductDTO)
+            throws NotFoundException {
+        return productService.updateProduct(requestProductDTO.getId(), requestProductDTO);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<ResponseProductDTO> deleteProduct(@PathVariable("id") String id) {
+        return new ResponseEntity<>(productService.deleteProduct(id), HttpStatus.OK);
+    }
 
     // specific to this controller
     // @ExceptionHandler(NotFoundException.class)

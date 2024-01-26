@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.scaler.ecommerce.Clients.DTOs.FakeStoreProductDTO;
-import com.scaler.ecommerce.DTOs.GenericProductDTO;
+import com.scaler.ecommerce.DTOs.RequestProductDTO;
 import com.scaler.ecommerce.Exceptions.NotFoundException;
 
 @Component
@@ -50,10 +50,10 @@ public class FakeStoreProductClient {
         return response.getBody();
     }
 
-    public FakeStoreProductDTO createProduct(GenericProductDTO genericProductDTO) {
+    public FakeStoreProductDTO createProduct(RequestProductDTO RequestProductDTO) {
 
         RestTemplate restTemplate = restTemplateBuilder.build();
-        ResponseEntity<FakeStoreProductDTO> response = restTemplate.postForEntity(products, genericProductDTO,
+        ResponseEntity<FakeStoreProductDTO> response = restTemplate.postForEntity(products, RequestProductDTO,
                 FakeStoreProductDTO.class);
 
         return response.getBody();
@@ -79,10 +79,10 @@ public class FakeStoreProductClient {
         return response.getBody();
     }
 
-    public FakeStoreProductDTO updateProductById(Long id, GenericProductDTO genericProductDTO) throws NotFoundException {
+    public FakeStoreProductDTO updateProductById(Long id, RequestProductDTO RequestProductDTO) throws NotFoundException {
         RestTemplate restTemplate = restTemplateBuilder.build();
 
-        HttpEntity<GenericProductDTO> requestUpdate = new HttpEntity<>(genericProductDTO);
+        HttpEntity<RequestProductDTO> requestUpdate = new HttpEntity<>(RequestProductDTO);
 
         ResponseEntity<FakeStoreProductDTO> response = restTemplate.exchange(productsWithId,
                 HttpMethod.PUT, requestUpdate, FakeStoreProductDTO.class, id );

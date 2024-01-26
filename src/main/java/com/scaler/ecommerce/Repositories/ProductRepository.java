@@ -10,4 +10,5 @@ import com.scaler.ecommerce.Models.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
+    Product deleteByUuid(UUID uuid);
 }
