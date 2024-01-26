@@ -45,7 +45,9 @@ public class ProductControllerMockMCVTest {
                 .thenReturn(responseProductDTO);
 
         ResultActions resultActions = mockMvc.perform(get("/products/32098ruefiwfhdknsdkjfhsdi"))
-                .andExpect(status().is(200));
+                .andExpect(status().is(200))
+                .andExpect(content().string(objectMapper.writeValueAsString(responseProductDTO)))
+                .andExpect(jsonPath("$.id").value("32098ruefiwfhdknsdkjfhsdi"));
 
         String responseString = resultActions.andReturn().getResponse().getContentAsString();
 
