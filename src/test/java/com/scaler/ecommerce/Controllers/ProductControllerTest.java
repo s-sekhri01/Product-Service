@@ -1,6 +1,8 @@
 package com.scaler.ecommerce.Controllers;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Assertions;
@@ -30,6 +32,18 @@ public class ProductControllerTest {
         ResponseProductDTO response = productController.getProductById("0bb3ad31-5eb1-44a1-a022-3f3b7530b1ca");
 
         Assertions.assertNull(response);
+    }
+
+    @Test
+    public void testGetProductById2() throws NotFoundException {
+        when(inbuiltProductService.getProductById(any()))
+                .thenReturn(null);
+
+        ResponseProductDTO response = productController.getProductById(null);
+
+        verify(inbuiltProductService, times(0)).getProductById(null);
+
+
     }
 
 }

@@ -38,12 +38,12 @@ public class ProductController {
 
     @PostMapping
     public ResponseProductDTO createProduct(@RequestBody RequestProductDTO product) {
-        return inbuiltProductService.createProduct(product);
+        return inbuiltProductService.createOrUpdateProduct(product);
     }
 
     @PutMapping
     public ResponseProductDTO updateProductById(@RequestBody RequestProductDTO product) {
-        return inbuiltProductService.updateProduct(product);
+        return inbuiltProductService.createOrUpdateProduct(product);
     }
 
     @DeleteMapping("{id}")

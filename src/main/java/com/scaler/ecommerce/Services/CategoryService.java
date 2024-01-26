@@ -42,6 +42,10 @@ public class CategoryService {
         return responseCategoryDTOMapper(optCategory.get());
     }
 
+    public ResponseCategoryDTO getCategoryByName(String name){
+        return responseCategoryDTOMapper(categoryRepository.findByName(name));
+    }
+
     public static Category requestCategoryDTOMapper(RequestCategoryDTO requestCategoryDTO) {
         Category category = new Category();
         category.setName(requestCategoryDTO.getName());

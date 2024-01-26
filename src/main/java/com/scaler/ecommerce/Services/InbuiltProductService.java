@@ -14,6 +14,7 @@ import com.scaler.ecommerce.Models.Category;
 import com.scaler.ecommerce.Models.Currency;
 import com.scaler.ecommerce.Models.Price;
 import com.scaler.ecommerce.Models.Product;
+import com.scaler.ecommerce.Repositories.CategoryRepository;
 import com.scaler.ecommerce.Repositories.ProductRepository;
 
 @Service
@@ -21,8 +22,11 @@ public class InbuiltProductService {
 
     private ProductRepository productRepository;
 
-    public InbuiltProductService(ProductRepository productRepository) {
+    private static CategoryRepository categoryRepository;
+
+    public InbuiltProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        InbuiltProductService.categoryRepository = categoryRepository;
     }
 
     public List<ResponseProductDTO> getAllProducts() {
@@ -48,7 +52,7 @@ public class InbuiltProductService {
         return response;
     }
 
-    public ResponseProductDTO createProduct(RequestProductDTO requestProductDTO) {
+    public ResponseProductDTO createOrUpdateProduct(RequestProductDTO requestProductDTO) {
         Product product = requestProductDTOMapper(requestProductDTO);
         return responseProductDTOMapper(productRepository.save(product));
     }
@@ -60,18 +64,18 @@ public class InbuiltProductService {
         productRepository.deleteById(uuid);
     }
 
-    public ResponseProductDTO updateProduct(RequestProductDTO requestProductDTO) {
-        Product product = requestProductDTOMapper(requestProductDTO);
-        return responseProductDTOMapper(productRepository.save(product));
-    }
-
     public static Product requestProductDTOMapper(RequestProductDTO requestProductDTO) {
         Product product = new Product();
         product.setTitle(requestProductDTO.getTitle());
         product.setDescription(requestProductDTO.getDescription());
         product.setImage(requestProductDTO.getImage());
-        Category category = new Category();
-        category.setName(requestProductDTO.getCategory());
+        Category category;
+        if (categoryRepository.findByName(requestProductDTO.getCategory()) != null) {
+            category = categoryRepository.findByName(requestProductDTO.getCategory());
+        } else {
+            category = new Category();
+            category.setName(requestProductDTO.getCategory());
+        }
         product.setCategory(category);
         Price price = new Price();
         price.setAmount(requestProductDTO.getPrice());

@@ -10,4 +10,6 @@ import com.scaler.ecommerce.Models.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
+    Category findByName(String name);
+
 }
