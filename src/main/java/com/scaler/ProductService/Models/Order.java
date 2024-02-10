@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "orders")
 public class Order extends BaseModel{
     @ManyToMany
     private List<Product> products;

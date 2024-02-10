@@ -12,8 +12,8 @@ import com.scaler.ProductService.DTOs.RequestProductDTO;
 import com.scaler.ProductService.DTOs.ResponseProductDTO;
 import com.scaler.ProductService.Exceptions.NotFoundException;
 
-@Primary
-@Service()
+//@Primary
+@Service
 public class FakeStoreProductService implements ProductService {
 
     private FakeStoreProductClient fakeStoreProductClient;
