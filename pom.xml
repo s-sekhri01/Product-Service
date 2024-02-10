@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.scaler</groupId>
-	<artifactId>Product Service</artifactId>
+	<artifactId>ProductService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Product Service</name>
+	<name>ProductService</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
