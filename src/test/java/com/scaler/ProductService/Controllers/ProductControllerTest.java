@@ -27,20 +27,19 @@ public class ProductControllerTest {
 
     @Test
     public void checkIfGetProductByIdReturnsNull() throws NotFoundException {
-        when(inbuiltProductService.getProductById(any()))
-                .thenReturn(null);
+        when(inbuiltProductService.getProductById(any())).thenReturn(null);
 
-        ResponseProductDTO response = productController.getProductById("0bb3ad31-5eb1-44a1-a022-3f3b7530b1ca");
+        ResponseProductDTO response = productController.getProductById("eyJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkQXQiOjE3MDg5MjY3MjkyMTgsImV4cGlyeUF0IjoxOTc4MiwiZW1haWwiOiJ0aW5hc2hhcm1hQGdtYWlsLmNvbSJ9.lMg_D0tA50ae0y_l-j9cabBmCWf326x0LBuaT1FanxE ",
+                "0bb3ad31-5eb1-44a1-a022-3f3b7530b1ca");
 
         Assertions.assertNull(response);
     }
 
     @Test
     public void testGetProductById2() throws NotFoundException {
-        when(inbuiltProductService.getProductById(any()))
-                .thenReturn(null);
+        when(inbuiltProductService.getProductById(any())).thenReturn(null);
 
-        ResponseProductDTO response = productController.getProductById(null);
+        ResponseProductDTO response = productController.getProductById(null,null);
 
         verify(inbuiltProductService, times(0)).getProductById(null);
 

@@ -1,17 +1,15 @@
 package com.scaler.ProductService.Controllers;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.scaler.ProductService.Security.JwtData;
+import com.scaler.ProductService.Security.TokenValidator;
+import org.apache.tomcat.Jar;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.scaler.ProductService.DTOs.RequestProductDTO;
 import com.scaler.ProductService.DTOs.ResponseProductDTO;
@@ -23,6 +21,7 @@ import com.scaler.ProductService.Services.ProductService;
 public class ProductController {
 
     private ProductService productService;
+    private TokenValidator tokenValidator;
 
     // private OutSourceProductService productService;
 
@@ -31,8 +30,9 @@ public class ProductController {
     // this.productService = productService;
     // }
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, TokenValidator tokenValidator) {
         this.productService = productService;
+        this.tokenValidator = tokenValidator;
     }
 
     @GetMapping
@@ -41,7 +41,11 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public ResponseProductDTO getProductById(@PathVariable("id") String id) throws NotFoundException {
+    public ResponseProductDTO getProductById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authToken, @PathVariable("id") String id) throws NotFoundException {
+        Optional<JwtData> jwtDataOptional = tokenValidator.validateToken(authToken);
+        if (jwtDataOptional.isPresent()) {
+            // Business Logic for if the token is valid
+        }
         return productService.getProductById(id);
     }
 
@@ -51,8 +55,7 @@ public class ProductController {
     }
 
     @PutMapping
-    public ResponseProductDTO updateProductById(@RequestBody RequestProductDTO requestProductDTO)
-            throws NotFoundException {
+    public ResponseProductDTO updateProductById(@RequestBody RequestProductDTO requestProductDTO) throws NotFoundException {
         return productService.updateProduct(requestProductDTO.getId(), requestProductDTO);
     }
 
