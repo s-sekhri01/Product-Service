@@ -1,25 +1,28 @@
 package com.scaler.ProductService.Services;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
-import com.scaler.ProductService.Clients.FakeStoreProductClient;
 import com.scaler.ProductService.Clients.DTOs.FakeStoreProductDTO;
+import com.scaler.ProductService.Clients.FakeStoreProductClient;
 import com.scaler.ProductService.DTOs.RequestProductDTO;
 import com.scaler.ProductService.DTOs.ResponseProductDTO;
 import com.scaler.ProductService.Exceptions.NotFoundException;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
-//@Primary
+import java.util.ArrayList;
+import java.util.List;
+
+@Primary
 @Service
 public class FakeStoreProductService implements ProductService {
 
     private FakeStoreProductClient fakeStoreProductClient;
+    private RedisTemplate<String, Object> redisTemplate;
 
-    public FakeStoreProductService(FakeStoreProductClient fakeStoreProductClient) {
+    public FakeStoreProductService(FakeStoreProductClient fakeStoreProductClient,
+                                   RedisTemplate<String, Object> redisTemplate) {
         this.fakeStoreProductClient = fakeStoreProductClient;
+        this.redisTemplate = redisTemplate;
     }
 
     // Map the response objec to our genericProduct DTO (usually done in Mapper
@@ -50,7 +53,17 @@ public class FakeStoreProductService implements ProductService {
 
     public ResponseProductDTO getProductById(String id) throws NotFoundException {
         Long longId = Long.parseLong(id);
-        return responseProductDTOMapper(fakeStoreProductClient.getProductById(longId));
+        ResponseProductDTO responseFromCache = (ResponseProductDTO)
+                redisTemplate.opsForValue().get(String.valueOf(longId));
+        if(responseFromCache != null){
+            return responseFromCache;
+        }
+
+        ResponseProductDTO responseFromDB =
+                responseProductDTOMapper(fakeStoreProductClient.getProductById(longId));
+
+        redisTemplate.opsForValue().set(String.valueOf(id), responseFromDB);
+        return responseFromDB;
     }
 
     public ResponseProductDTO createProduct(RequestProductDTO requestProductDTO) {

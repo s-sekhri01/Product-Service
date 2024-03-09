@@ -18,7 +18,7 @@ import com.scaler.ProductService.Models.Product;
 import com.scaler.ProductService.Repositories.CategoryRepository;
 import com.scaler.ProductService.Repositories.ProductRepository;
 
-@Primary
+//@Primary
 @Service
 public class InbuiltProductService implements ProductService {
 

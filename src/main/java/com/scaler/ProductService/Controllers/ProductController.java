@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.scaler.ProductService.Security.JwtData;
 import com.scaler.ProductService.Security.TokenValidator;
+import jakarta.annotation.Nullable;
 import org.apache.tomcat.Jar;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,8 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public ResponseProductDTO getProductById(@RequestHeader(HttpHeaders.AUTHORIZATION) String authToken, @PathVariable("id") String id) throws NotFoundException {
+    public ResponseProductDTO getProductById(@Nullable @RequestHeader(HttpHeaders.AUTHORIZATION) String authToken
+            , @PathVariable("id") String id) throws NotFoundException {
         Optional<JwtData> jwtDataOptional = tokenValidator.validateToken(authToken);
         if (jwtDataOptional.isPresent()) {
             // Business Logic for if the token is valid
