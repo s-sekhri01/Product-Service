@@ -8,6 +8,7 @@ import com.scaler.ProductService.Exceptions.NotFoundException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +19,14 @@ public class FakeStoreProductService implements ProductService {
 
     private FakeStoreProductClient fakeStoreProductClient;
     private RedisTemplate<String, Object> redisTemplate;
+    private RestTemplate restTemplate;
 
     public FakeStoreProductService(FakeStoreProductClient fakeStoreProductClient,
-                                   RedisTemplate<String, Object> redisTemplate) {
+                                   RedisTemplate<String, Object> redisTemplate,
+                                   RestTemplate restTemplate) {
         this.fakeStoreProductClient = fakeStoreProductClient;
         this.redisTemplate = redisTemplate;
+        this.restTemplate = restTemplate;
     }
 
     // Map the response objec to our genericProduct DTO (usually done in Mapper
@@ -52,10 +56,12 @@ public class FakeStoreProductService implements ProductService {
     }
 
     public ResponseProductDTO getProductById(String id) throws NotFoundException {
+        Object userData = restTemplate.getForEntity("http://userservice/users/efbbbf3c-6765-6e65-7261-7465643e0000",
+                Object.class);
         Long longId = Long.parseLong(id);
         ResponseProductDTO responseFromCache = (ResponseProductDTO)
                 redisTemplate.opsForValue().get(String.valueOf(longId));
-        if(responseFromCache != null){
+        if (responseFromCache != null) {
             return responseFromCache;
         }
 
